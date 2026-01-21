@@ -3,66 +3,372 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulseNotify - Tu App de Notificaciones y Recordatorios</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+    <title>Momentum</title>
+    <style>
+        /* --- General Styles & Variables --- */
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #50e3c2;
+            --background-color: #f4f7f6;
+            --surface-color: #ffffff;
+            --text-color: #333;
+            --light-gray: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-size: 16px;
+        }
+        .hidden { display: none !important; }
+
+        /* --- Login Screen --- */
+        #login-screen {
+            text-align: center;
+            padding: 40px;
+        }
+        #login-screen h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        #login-screen p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .login-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+        }
+        .login-button:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+        }
+        .login-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* --- Main App Container --- */
+        #app-container {
+            width: 100%;
+            max-width: 900px;
+            height: 95vh;
+            max-height: 800px;
+            background-color: var(--surface-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .user-profile span {
+            font-weight: bold;
+        }
+        #logout-button {
+            background: none;
+            border: 1px solid var(--light-gray);
+            color: #777;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #logout-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* --- Main Content --- */
+        main {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            width: 220px;
+            padding: 20px;
+            border-right: 1px solid var(--light-gray);
+            background-color: #fafafa;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav li button {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: none;
+            border: none;
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            color: #555;
+        }
+        nav li button.active, nav li button:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* --- Content Sections --- */
+        .content-section {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+        .content-section h2 {
+            margin-top: 0;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+        }
+        
+        /* --- General Form Styles --- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .btn-primary {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #45c9b0;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start;
+            }
+            #app-container {
+                height: 100vh;
+                max-height: none;
+                border-radius: 0;
+            }
+            main {
+                flex-direction: column;
+            }
+            nav {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--light-gray);
+                padding: 10px;
+                display: flex;
+                justify-content: center;
+            }
+            nav ul {
+                display: flex;
+                gap: 5px;
+            }
+            nav li button {
+                padding: 10px 15px;
+            }
+            .content-section {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
+
+    <!-- Pantalla de Login -->
+    <div id="login-screen">
+        <h1>Momentum</h1>
+        <p>Tu asistente personal para agilizar tu día.</p>
+        <button id="login-button" class="login-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 261.8 0 120.3 109.8 8.9 244 8.9c77.9 0 148.5 33.4 198.8 87.2l-74.2 67.7C334.5 109.4 290.4 88.8 244 88.8c-88.1 0-159.9 71.8-159.9 159.9s71.8 159.9 159.9 159.9c101.8 0 138.3-72.3 142.9-109.9H244V241h244c2.5 12.9 3.9 26.4 3.9 40.8z"/></svg>
+            Iniciar Sesión con Google
+        </button>
+    </div>
+
+    <!-- Contenedor Principal de la App -->
+    <div id="app-container" class="hidden">
         <header>
-            <h1>PulseNotify</h1>
-            <nav>
-                <button id="home-btn">Inicio</button>
-                <button id="birthdays-btn">Cumpleaños</button>
-                <button id="work-btn">Laboral</button>
-                <button id="whatsapp-btn">Mensajes WhatsApp</button>
-                <button id="login-btn">Iniciar Sesión</button>
-            </nav>
+            <div class="user-profile">
+                <img id="user-photo" src="" alt="Foto de perfil">
+                <span id="user-name"></span>
+            </div>
+            <button id="logout-button">Cerrar Sesión</button>
         </header>
         <main>
-            <div id="home" class="section active">
-                <h2>Bienvenido a PulseNotify</h2>
-                <p>Tu herramienta para notificaciones y recordatorios personalizados.</p>
-            </div>
-            <div id="birthdays" class="section">
-                <h2>Cumpleaños</h2>
-                <form id="birthday-form">
-                    <input type="text" id="name" placeholder="Nombre" required>
-                    <input type="date" id="birthdate" required>
-                    <button type="submit">Agregar Cumpleaños</button>
-                </form>
-                <ul id="birthday-list"></ul>
-            </div>
-            <div id="work" class="section">
-                <h2>Laboral</h2>
-                <form id="work-form">
-                    <textarea id="task" placeholder="Descripción de la tarea" required></textarea>
-                    <input type="datetime-local" id="deadline" required>
-                    <button type="button" id="record-btn">Grabar Nota de Voz</button>
-                    <button type="submit">Agregar Tarea</button>
-                </form>
-                <ul id="work-list"></ul>
-            </div>
-            <div id="whatsapp" class="section">
-                <h2>Mensajes WhatsApp</h2>
-                <form id="message-form">
-                    <textarea id="template" placeholder="Plantilla del mensaje (usa {1}, {2}, etc. para placeholders)" required></textarea>
-                    <button type="button" id="add-placeholder">Agregar Placeholder</button>
-                    <div id="placeholders"></div>
-                    <button type="button" id="generate-btn">Generar Mensaje</button>
-                    <button type="button" id="save-template">Guardar Plantilla</button>
-                </form>
-                <div id="generated-message"></div>
-                <ul id="template-list"></ul>
-            </div>
-            <div id="login" class="section">
-                <h2>Iniciar Sesión con Google</h2>
-                <button id="google-login">Iniciar con Google</button>
-            </div>
+            <nav>
+                <ul>
+                    <li><button class="nav-button active" data-section="mensajes">Mensajes</button></li>
+                    <li><button class="nav-button" data-section="cumpleanos">Cumpleaños</button></li>
+                    <li><button class="nav-button" data-section="laboral">Laboral</button></li>
+                </ul>
+            </nav>
+            <section id="mensajes-section" class="content-section">
+                <h2>Generador de Mensajes</h2>
+                <p>Crea plantillas y genera mensajes personalizados al instante.</p>
+                <!-- Contenido de Mensajes aquí -->
+            </section>
+            <section id="cumpleanos-section" class="content-section hidden">
+                <h2>Recordatorios de Cumpleaños</h2>
+                <p>Añade un cumpleaños y se creará un evento anual en tu Google Calendar.</p>
+                <!-- Contenido de Cumpleaños aquí -->
+            </section>
+            <section id="laboral-section" class="content-section hidden">
+                <h2>Tareas Laborales</h2>
+                <p>Anota tareas por texto o voz y sincronízalas con tu calendario.</p>
+                <!-- Contenido Laboral aquí -->
+            </section>
         </main>
     </div>
-    <script src="script.js"></script>
+
+    <!-- Scripts de Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <script>
+        // =================================================================================
+        // PASO IMPORTANTE: PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE
+        // =================================================================================
+        const firebaseConfig = {
+          apiKey: "AIzaSyB_VnYjZHUmJqWR9IvSPobalqOqWldtw0k",
+          authDomain: "kikelong-agent.firebaseapp.com",
+          projectId: "kikelong-agent",
+          storageBucket: "kikelong-agent.firebasestorage.app",
+          messagingSenderId: "265491921170",
+          appId: "1:265491921170:web:3302fc4327e0e0dabb1bcb"
+        };
+        // =================================================================================
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig );
+        const auth = firebase.auth();
+        const provider = new firebase.auth.GoogleAuthProvider();
+        
+        // --- Elementos del DOM ---
+        const loginScreen = document.getElementById('login-screen');
+        const appContainer = document.getElementById('app-container');
+        const loginButton = document.getElementById('login-button');
+        const logoutButton = document.getElementById('logout-button');
+        const userNameEl = document.getElementById('user-name');
+        const userPhotoEl = document.getElementById('user-photo');
+        const navButtons = document.querySelectorAll('.nav-button');
+        const contentSections = document.querySelectorAll('.content-section');
+
+        // --- Lógica de Autenticación ---
+        loginButton.addEventListener('click', () => {
+            auth.signInWithPopup(provider).catch(error => {
+                console.error("Error durante el inicio de sesión:", error);
+                alert("Hubo un error al iniciar sesión. Por favor, intenta de nuevo.");
+            });
+        });
+
+        logoutButton.addEventListener('click', () => {
+            auth.signOut().catch(error => {
+                console.error("Error durante el cierre de sesión:", error);
+            });
+        });
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                // Usuario ha iniciado sesión
+                loginScreen.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                
+                // Actualizar UI con datos del usuario
+                userNameEl.textContent = user.displayName;
+                userPhotoEl.src = user.photoURL;
+            } else {
+                // Usuario ha cerrado sesión
+                loginScreen.classList.remove('hidden');
+                appContainer.classList.add('hidden');
+            }
+        });
+
+        // --- Lógica de Navegación ---
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const sectionId = button.dataset.section;
+
+                // Actualizar botones
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Mostrar la sección correcta
+                contentSections.forEach(section => {
+                    if (section.id === `${sectionId}-section`) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+            });
+        });
+
+    </script>
 </body>
 </html>
