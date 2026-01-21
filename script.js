@@ -1,11 +1,11 @@
 // Firebase configuration (replace with your own config)
 const firebaseConfig = {
-    apiKey: "your-api-key",
-    authDomain: "your-project.firebaseapp.com",
-    projectId: "your-project-id",
-    storageBucket: "your-project.appspot.com",
-    messagingSenderId: "123456789",
-    appId: "your-app-id"
+  apiKey: "AIzaSyB_VnYjZHUmJqWR9IvSPobalqOqWldtw0k",
+  authDomain: "kikelong-agent.firebaseapp.com",
+  projectId: "kikelong-agent",
+  storageBucket: "kikelong-agent.firebasestorage.app",
+  messagingSenderId: "265491921170",
+  appId: "1:265491921170:web:3302fc4327e0e0dabb1bcb"
 };
 
 // Initialize Firebase
