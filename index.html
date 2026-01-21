@@ -1,1 +1,68 @@
-hola mundo
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulseNotify - Tu App de Notificaciones y Recordatorios</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>PulseNotify</h1>
+            <nav>
+                <button id="home-btn">Inicio</button>
+                <button id="birthdays-btn">Cumpleaños</button>
+                <button id="work-btn">Laboral</button>
+                <button id="whatsapp-btn">Mensajes WhatsApp</button>
+                <button id="login-btn">Iniciar Sesión</button>
+            </nav>
+        </header>
+        <main>
+            <div id="home" class="section active">
+                <h2>Bienvenido a PulseNotify</h2>
+                <p>Tu herramienta para notificaciones y recordatorios personalizados.</p>
+            </div>
+            <div id="birthdays" class="section">
+                <h2>Cumpleaños</h2>
+                <form id="birthday-form">
+                    <input type="text" id="name" placeholder="Nombre" required>
+                    <input type="date" id="birthdate" required>
+                    <button type="submit">Agregar Cumpleaños</button>
+                </form>
+                <ul id="birthday-list"></ul>
+            </div>
+            <div id="work" class="section">
+                <h2>Laboral</h2>
+                <form id="work-form">
+                    <textarea id="task" placeholder="Descripción de la tarea" required></textarea>
+                    <input type="datetime-local" id="deadline" required>
+                    <button type="button" id="record-btn">Grabar Nota de Voz</button>
+                    <button type="submit">Agregar Tarea</button>
+                </form>
+                <ul id="work-list"></ul>
+            </div>
+            <div id="whatsapp" class="section">
+                <h2>Mensajes WhatsApp</h2>
+                <form id="message-form">
+                    <textarea id="template" placeholder="Plantilla del mensaje (usa {1}, {2}, etc. para placeholders)" required></textarea>
+                    <button type="button" id="add-placeholder">Agregar Placeholder</button>
+                    <div id="placeholders"></div>
+                    <button type="button" id="generate-btn">Generar Mensaje</button>
+                    <button type="button" id="save-template">Guardar Plantilla</button>
+                </form>
+                <div id="generated-message"></div>
+                <ul id="template-list"></ul>
+            </div>
+            <div id="login" class="section">
+                <h2>Iniciar Sesión con Google</h2>
+                <button id="google-login">Iniciar con Google</button>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
